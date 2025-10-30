@@ -1,5 +1,5 @@
 // Ganti URL ini dengan backend kamu di Railway
-const API_BASE = "https://magistory-backend-production.up.railway.app";
+const API_BASE = "https://magistory-app-production.up.railway.app";
 
 const ideaInput = document.getElementById("ideaInput");
 const generateBtn = document.getElementById("generateBtn");
