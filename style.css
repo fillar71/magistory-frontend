@@ -1,66 +1,26 @@
-body {
-  font-family: "Poppins", sans-serif;
-  background: #f9f9f9;
-  margin: 0;
-  padding: 0;
-}
-
-.container {
-  max-width: 700px;
-  margin: 2rem auto;
-  background: white;
-  border-radius: 15px;
-  padding: 2rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-h1 {
-  text-align: center;
-  color: #333;
-}
-
-input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  margin-top: 1rem;
-}
-
-.buttons {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-  gap: 10px;
-}
-
-button {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.2s;
-}
-
-button:hover {
-  background: #0056b3;
-}
-
-.output {
-  margin-top: 2rem;
-}
-
-#videoContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-video {
-  width: 200px;
-  border-radius: 10px;
-}
+:root{--bg:#f4f6f9;--card:#fff;--accent:#0066ff;--muted:#666}
+*{box-sizing:border-box}
+body{font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:0;background:var(--bg);color:#111}
+.container{max-width:1100px;margin:18px auto;padding:18px}
+header h1{margin:0 0 8px}
+.top-controls{display:flex;gap:8px;align-items:center}
+.top-controls input{padding:8px;border-radius:6px;border:1px solid #ddd}
+button{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+.hidden{display:none}
+.timeline-header{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+#previewArea{background:var(--card);padding:12px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.06);margin-top:12px}
+#previewMedia{min-height:180px;display:flex;gap:8px;align-items:center;justify-content:center}
+.adegan-list{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.adegan{background:var(--card);padding:12px;border-radius:8px;border:1px solid #eee;display:flex;gap:12px;align-items:flex-start}
+.adegan .meta{flex:1}
+.adegan h3{margin:0 0 6px}
+.adegan textarea{width:100%;height:70px;border-radius:6px;padding:8px;border:1px solid #ddd}
+.preview-clips{display:flex;gap:8px}
+.preview-clips video, .preview-clips img{width:160px;height:90px;object-fit:cover;border-radius:6px}
+.adegan-controls{display:flex;flex-direction:column;gap:8px}
+.small-input{width:80px;padding:6px;border-radius:6px;border:1px solid #ddd}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center}
+.modal-content{background:#fff;padding:16px;border-radius:10px;width:360px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.project-actions button{margin-left:8px}
+footer{margin-top:18px;text-align:center;color:var(--muted)}
