@@ -1,46 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Magistory Instant Video</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Magistory Instant Video — Editor</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>🎬 Magistory Instant Video</h1>
+    <header>
+      <h1>Magistory Instant Video</h1>
+      <div class="top-controls">
+        <input id="ideaInput" placeholder="Masukkan ide video..." />
+        <input id="durationInput" placeholder="Durasi total (detik)" style="width:120px"/>
+        <input id="aspectInput" placeholder="Aspect ratio (16:9)" style="width:120px"/>
+        <input id="styleInput" placeholder="Style (edukatif, cinematic)" style="width:140px"/>
+        <button id="generateBtn">Generate</button>
+      </div>
+    </header>
 
-    <input
-      type="text"
-      id="ideaInput"
-      placeholder="Masukkan ide video kamu..."
-    />
-    <div class="buttons">
-      <button id="generateBtn">Generate Script</button>
-      <button id="videoBtn">Cari Video</button>
-    </div>
+    <main>
+      <section id="timelineSection" class="hidden">
+        <div class="timeline-header">
+          <h2 id="videoTitle">—</h2>
+          <div class="project-actions">
+            <button id="saveProjectBtn">Save Project</button>
+            <button id="renderBtn">Render</button>
+          </div>
+        </div>
 
-    <section class="output">
-      <h2>📝 Script Hasil</h2>
-      <p id="scriptResult">Belum ada hasil.</p>
+        <div id="previewArea">
+          <div id="previewMedia">Pratinjau media akan tampil di sini</div>
+        </div>
 
-      <section id="generator">
-  <h2>Generate Video Script</h2>
-  <input id="idea" placeholder="Masukkan ide video..." />
-  <input id="duration" placeholder="Durasi (misal 60 detik)" />
-  <input id="aspect" placeholder="Aspect Ratio (misal 16:9)" />
-  <input id="style" placeholder="Style (edukatif, cinematic...)" />
-  <button id="generateBtn">Generate</button>
-</section>
+        <div id="adeganList" class="adegan-list"></div>
+      </section>
 
-<section id="timeline" style="display:none;">
-  <h2 id="judulVideo"></h2>
-  <div id="adeganList"></div>
-</section>
+      <section id="renderModal" class="modal hidden">
+          <div class="modal-content">
+            <h3>Render</h3>
+            <label>Resolution:
+              <select id="renderResolution">
+                <option value="720p">720p</option>
+                <option value="1080p" selected>1080p</option>
+                <option value="4k">4K</option>
+              </select>
+            </label>
+            <div class="modal-actions">
+              <button id="renderNowBtn">Render Now</button>
+              <button id="renderCancelBtn">Cancel</button>
+            </div>
+            <div id="renderStatus"></div>
+          </div>
+      </section>
+    </main>
 
-      <h2>🎥 Video dari Pexels</h2>
-      <div id="videoContainer"></div>
-    </section>
+    <footer>
+      <small>Magistory — Prototype</small>
+    </footer>
   </div>
 
   <script src="script.js"></script>
