@@ -1,66 +1,61 @@
 // components/MainPreview.js
 
-/**
- * Menampilkan pratinjau video utama yang memutar semua klip dari setiap adegan secara berurutan.
- * @param {Object[]} scenes - daftar adegan dari script
- * @param {string} containerId - ID elemen container
- */
 export function renderMainPreview(scenes, containerId) {
   const container = document.getElementById(containerId);
-  if (!container) return;
+  if (!container) {
+    console.error("❌ Container pratinjau utama tidak ditemukan:", containerId);
+    return;
+  }
 
+  // Buat template UI utama
   container.innerHTML = `
-    <h2 style="text-align:center;margin-top:20px;">🎥 Pratinjau Video Utama</h2>
-    <video id="mainPreview" width="100%" controls class="main-preview-video" style="border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.2)"></video>
+    <h2 style="text-align:center;margin:20px 0;">🎬 Pratinjau Media Utama</h2>
+    <video id="mainPreview" width="100%" controls style="
+      border-radius:12px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.3);
+      display:block;
+      margin:auto;">
+    </video>
     <div id="mainPreviewStatus" style="text-align:center;margin-top:10px;font-size:14px;color:#555"></div>
   `;
 
-  const videoPlayer = document.getElementById("mainPreview");
+  const videoEl = document.getElementById("mainPreview");
   const status = document.getElementById("mainPreviewStatus");
-container.innerHTML += `
-  <div style="text-align:center;margin-top:10px;">
-    <button id="replayAllBtn" style="padding:8px 16px;border:none;background:#007bff;color:#fff;border-radius:8px;cursor:pointer;">
-      🔁 Putar Ulang Semua
-    </button>
-  </div>
-`;
-document.getElementById("replayAllBtn").onclick = () => {
-  currentIndex = 0;
-  playNextClip();
-};
 
-  // kumpulkan semua klip dari semua adegan
+  // Gabungkan semua klip media dari semua adegan
   const allClips = [];
   scenes.forEach((scene) => {
-    if (scene.media && scene.media.length > 0) {
-      scene.media.forEach((m) => allClips.push(m.src));
+    if (Array.isArray(scene.media)) {
+      scene.media.forEach((m) => {
+        if (m && m.src) allClips.push(m.src);
+      });
     }
   });
 
   if (allClips.length === 0) {
-    container.innerHTML += `<p style="text-align:center;color:red;">Tidak ada media untuk diputar.</p>`;
+    status.innerText = "⚠️ Tidak ada media ditemukan untuk diputar.";
     return;
   }
 
   let currentIndex = 0;
 
-  function playNextClip() {
+  function playNext() {
     if (currentIndex >= allClips.length) {
       status.innerText = "✅ Semua klip selesai diputar.";
       return;
     }
 
-    const src = allClips[currentIndex];
-    status.innerText = `Memutar klip ${currentIndex + 1} dari ${allClips.length}`;
-    videoPlayer.src = src;
-    videoPlayer.play();
+    const clipSrc = allClips[currentIndex];
+    videoEl.src = clipSrc;
+    videoEl.play();
+    status.innerText = `Memutar klip ${currentIndex + 1}/${allClips.length}`;
 
-    // Setelah selesai, lanjut ke klip berikutnya
-    videoPlayer.onended = () => {
+    videoEl.onended = () => {
       currentIndex++;
-      playNextClip();
+      playNext();
     };
   }
 
-  playNextClip();
+  // Mulai putar otomatis saat load
+  playNext();
 }
