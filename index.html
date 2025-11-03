@@ -1,49 +1,23 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Magistory Instant Video</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <h1>Magistory Instant Video</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Magistory Instant Video</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <h1>🎬 Magistory Instant Video</h1>
 
-  <section id="generator">
-    <input id="idea" placeholder="Masukkan ide video..." />
-    <input id="duration" placeholder="Durasi total (detik)" />
-    <input id="aspect" placeholder="Aspect ratio (16:9)" />
-    <input id="style" placeholder="Style (edukatif, cinematic...)" />
-    <button id="generateBtn">Generate</button>
-  </section>
-
-  <section id="timeline" class="hidden">
-    <h2 id="judulVideo"></h2>
-    <div id="adeganList" class="timeline-list"></div>
-    <button id="saveProjectBtn">💾 Save Project</button>
-    <button id="renderBtn">🎬 Render</button>
-  </section>
-
-  <!-- Modal Render -->
-  <section id="renderModal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Render</h3>
-      <label>Resolution:
-        <select id="renderResolution">
-          <option value="720p">720p</option>
-          <option value="1080p" selected>1080p</option>
-          <option value="4k">4K</option>
-        </select>
-      </label>
-      <div class="modal-actions">
-        <button id="renderNowBtn">Render Now</button>
-        <button id="renderCancelBtn">Cancel</button>
+      <div class="generator">
+        <input id="idea" placeholder="Masukkan ide video..." />
+        <button id="generateBtn">Generate Script</button>
       </div>
-      <div id="renderStatus"></div>
-    </div>
-  </section>
 
-  <footer>Magistory — Interactive Timeline</footer>
-  <script src="script.js"></script>
-</body>
+      <div id="timeline"></div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+  </body>
 </html>
