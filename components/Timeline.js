@@ -1,9 +1,11 @@
 import { renderMediaPreview } from "./MediaPreview.js";
+import { renderMainPreview } from "./MainPreview.js";
 
 export function renderTimeline(scriptData) {
   const timeline = document.getElementById("timeline");
   timeline.innerHTML = `
-    <h2>${scriptData.judul}</h2>
+    <div id="main-preview-container"></div>
+    <h2 style="text-align:center;margin:20px 0;">${scriptData.judul}</h2>
     ${scriptData.adegan
       .map(
         (scene) => `
@@ -18,6 +20,10 @@ export function renderTimeline(scriptData) {
       .join("")}
   `;
 
+  // 🔥 Render pratinjau media utama
+  renderMainPreview(scriptData.adegan, "main-preview-container");
+
+  // 🔥 Render media per adegan
   scriptData.adegan.forEach((scene) => {
     renderMediaPreview(scene.media, `media-${scene.nomor_adegan}`);
   });
