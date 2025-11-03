@@ -22,10 +22,10 @@ export function renderTimeline(scriptData) {
       .join("")}
   `;
 
-  // 🔥 Render pratinjau utama
+  // Pratinjau utama (dengan progress dan thumbnail)
   renderMainPreview(scriptData.adegan, "main-preview-container");
 
-  // 🔥 Render tiap media adegan
+  // Pratinjau per adegan
   scriptData.adegan.forEach((scene) => {
     renderMediaPreview(scene.media, `media-${scene.nomor_adegan}`);
   });
