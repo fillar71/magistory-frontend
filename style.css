@@ -48,3 +48,20 @@ video {
   border-radius: 8px;
   margin-top: 8px;
 }
+.main-preview-video {
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+}
+
+.scene-video {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 8px;
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
