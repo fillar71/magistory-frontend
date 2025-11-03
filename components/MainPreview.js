@@ -17,6 +17,17 @@ export function renderMainPreview(scenes, containerId) {
 
   const videoPlayer = document.getElementById("mainPreview");
   const status = document.getElementById("mainPreviewStatus");
+container.innerHTML += `
+  <div style="text-align:center;margin-top:10px;">
+    <button id="replayAllBtn" style="padding:8px 16px;border:none;background:#007bff;color:#fff;border-radius:8px;cursor:pointer;">
+      🔁 Putar Ulang Semua
+    </button>
+  </div>
+`;
+document.getElementById("replayAllBtn").onclick = () => {
+  currentIndex = 0;
+  playNextClip();
+};
 
   // kumpulkan semua klip dari semua adegan
   const allClips = [];
