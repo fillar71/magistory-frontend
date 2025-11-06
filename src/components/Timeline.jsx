@@ -32,5 +32,4 @@ export function renderTimeline(scriptData) {
   scriptData.adegan.forEach((scene) => {
     renderMediaPreview(scene.media, `media-${scene.nomor_adegan}`);
   });
-  export default Timeline;
 }
