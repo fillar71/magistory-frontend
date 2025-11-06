@@ -1,5 +1,4 @@
-const PEXELS_API_KEY = "ISI_API_KEY_PEXELS_KAMU";
-
+const PEXELS_API_KEY = process.env.NEXT_PUBLIC_PEXELS_KEY;
 export async function searchMedia(keyword, limit = 1) {
   const url = `https://api.pexels.com/videos/search?query=${encodeURIComponent(keyword)}&per_page=${limit}`;
   const res = await fetch(url, {
