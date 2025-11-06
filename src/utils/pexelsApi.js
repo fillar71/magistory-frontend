@@ -35,4 +35,21 @@ export async function searchMedia(query, limit = 3) {
     }
 
     // Jika video tidak ada, cari gambar
-    const
+    const photoRes = await fetch(
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(
+        query
+      )}&per_page=${limit}`,
+      { headers: { Authorization: PEXELS_API_KEY } }
+    );
+
+    const photoJson = await photoRes.json();
+    return photoJson.photos.map((p) => ({
+      type: "image",
+      src: p.src?.medium || p.src?.original,
+      thumbnail: p.src?.small,
+    }));
+  } catch (err) {
+    console.error("🔥 Error mencari media Pexels:", err);
+    return [];
+  }
+}
