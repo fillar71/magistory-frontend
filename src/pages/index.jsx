@@ -4,32 +4,56 @@ import Timeline from "../components/Timeline";
 import { searchMedia } from "../utils/pexelsApi";
 
 export default function Home() {
-  const [idea, setIdea] = useState("");
-  const [duration, setDuration] = useState(30);
+  const [ide, setIde] = useState("");
+  const [durasi, setDurasi] = useState(30);
   const [aspect, setAspect] = useState("16:9");
   const [style, setStyle] = useState("Edukasi");
   const [script, setScript] = useState(null);
   const [loading, setLoading] = useState(false);
 
   async function handleGenerate() {
+    if (!ide.trim()) {
+      alert("Masukkan ide video terlebih dahulu!");
+      return;
+    }
+
     setLoading(true);
-    const res = await fetch("https://magistory-app-production.up.railway.app/api/generate-script", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idea, duration, aspectRatio: aspect, style }),
-    });
-    const data = await res.json();
+    try {
+      const res = await fetch("https://magistory-app-production.up.railway.app/api/generate-script", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ide: ide,
+          durasi_total: durasi,
+          aspect_ratio: aspect,
+          style: style,
+        }),
+      });
 
-    // tambahkan media otomatis dari Pexels
-    const enrichedScenes = await Promise.all(
-      data.adegan.map(async (scene) => {
-        const visuals = await Promise.all(scene.deskripsi_visual.map((kw) => searchMedia(kw, 1)));
-        return { ...scene, media: visuals.flat() };
-      })
-    );
+      const data = await res.json();
 
-    setScript({ ...data, adegan: enrichedScenes });
-    setLoading(false);
+      if (!data.adegan) {
+        alert("Gagal mendapatkan skrip dari Gemini. Lihat log backend.");
+        console.error(data);
+        return;
+      }
+
+      // Tambahkan media otomatis dari Pexels
+      const enrichedScenes = await Promise.all(
+        data.adegan.map(async (scene) => {
+          const keywords = scene.kata_kunci_video || scene.deskripsi_visual;
+          const results = await searchMedia(keywords, 1);
+          return { ...scene, media: results };
+        })
+      );
+
+      setScript({ ...data, adegan: enrichedScenes });
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat generate script.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -37,11 +61,36 @@ export default function Home() {
       {!script ? (
         <div className="w-full max-w-md space-y-4">
           <h1 className="text-3xl font-bold text-center">Magistory Instant Video</h1>
-          <input className="border p-2 rounded w-full" placeholder="Masukkan ide video..." value={idea} onChange={(e) => setIdea(e.target.value)} />
-          <input className="border p-2 rounded w-full" type="number" value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="Durasi (detik)" />
-          <input className="border p-2 rounded w-full" value={aspect} onChange={(e) => setAspect(e.target.value)} placeholder="Aspect Ratio (misal 16:9)" />
-          <input className="border p-2 rounded w-full" value={style} onChange={(e) => setStyle(e.target.value)} placeholder="Gaya video (edukatif, cinematic...)" />
-          <button onClick={handleGenerate} disabled={loading} className="bg-blue-600 text-white w-full py-2 rounded-lg">
+          <input
+            className="border p-2 rounded w-full"
+            placeholder="Masukkan ide video..."
+            value={ide}
+            onChange={(e) => setIde(e.target.value)}
+          />
+          <input
+            className="border p-2 rounded w-full"
+            type="number"
+            value={durasi}
+            onChange={(e) => setDurasi(e.target.value)}
+            placeholder="Durasi total (detik)"
+          />
+          <input
+            className="border p-2 rounded w-full"
+            value={aspect}
+            onChange={(e) => setAspect(e.target.value)}
+            placeholder="Aspect Ratio (misal 16:9)"
+          />
+          <input
+            className="border p-2 rounded w-full"
+            value={style}
+            onChange={(e) => setStyle(e.target.value)}
+            placeholder="Gaya video (edukatif, cinematic...)"
+          />
+          <button
+            onClick={handleGenerate}
+            disabled={loading}
+            className="bg-blue-600 text-white w-full py-2 rounded-lg"
+          >
             {loading ? "Menghasilkan..." : "Generate"}
           </button>
         </div>
