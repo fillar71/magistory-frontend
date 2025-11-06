@@ -1,6 +1,6 @@
 // src/pages/index.jsx
 import { useState } from "react";
-import Timeline from "../components/Timeline";
+import Timeline from "../components/Timeline.jsx";
 import { searchMedia } from "../utils/pexelsApi";
 
 export default function Home() {
