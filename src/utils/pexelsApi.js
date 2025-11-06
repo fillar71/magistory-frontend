@@ -1,16 +1,15 @@
-// src/utils/pexelsApi.js
-const PEXELS_API_KEY = import.meta.env.VITE_PEXELS_API_KEY;
+const PEXELS_API_KEY = "ISI_API_KEY_PEXELS_KAMU";
 
-export async function searchMedia(keyword, perPage = 5) {
-  const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(keyword)}&per_page=${perPage}`, {
+export async function searchMedia(keyword, limit = 1) {
+  const url = `https://api.pexels.com/videos/search?query=${encodeURIComponent(keyword)}&per_page=${limit}`;
+  const res = await fetch(url, {
     headers: {
       Authorization: PEXELS_API_KEY,
     },
   });
   const data = await res.json();
-  return data.photos?.map((p) => ({
-    type: "image",
-    src: p.src.medium,
-    photographer: p.photographer,
-  })) || [];
+  return data.videos.map((v) => ({
+    src: v.video_files[0]?.link,
+    thumbnail: v.image,
+  }));
 }
