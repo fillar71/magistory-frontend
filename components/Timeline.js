@@ -1,4 +1,3 @@
-// components/Timeline.js
 import { renderMediaPreview } from "./MediaPreview.js";
 import { renderMainPreview } from "./MainPreview.js";
 
@@ -22,10 +21,14 @@ export function renderTimeline(scriptData) {
       .join("")}
   `;
 
-  // Pratinjau utama (dengan progress dan thumbnail)
-  renderMainPreview(scriptData.adegan, "main-preview-container");
+  // Pratinjau utama (menyesuaikan durasi total)
+  renderMainPreview(
+    scriptData.adegan,
+    "main-preview-container",
+    scriptData.konfigurasi.total_durasi
+  );
 
-  // Pratinjau per adegan
+  // Pratinjau media per adegan
   scriptData.adegan.forEach((scene) => {
     renderMediaPreview(scene.media, `media-${scene.nomor_adegan}`);
   });
