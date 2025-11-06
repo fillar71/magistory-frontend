@@ -1,106 +1,141 @@
-// src/pages/index.jsx
+"use client";
 import { useState } from "react";
 import Timeline from "../components/Timeline.jsx";
-import { searchMedia } from "../utils/pexelsApi";
+import { searchMedia } from "../utils/pexelsApi.js";
 
 export default function Home() {
-  const [ide, setIde] = useState("");
-  const [durasi, setDurasi] = useState(30);
+  const [idea, setIdea] = useState("");
+  const [duration, setDuration] = useState(30);
   const [aspect, setAspect] = useState("16:9");
   const [style, setStyle] = useState("Edukasi");
   const [script, setScript] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // 🔹 Ambil URL backend dari .env atau fallback ke Railway
+  const backendURL =
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    "https://magistory-app-production.up.railway.app";
 
   async function handleGenerate() {
-    if (!ide.trim()) {
+    if (!idea) {
       alert("Masukkan ide video terlebih dahulu!");
       return;
     }
 
     setLoading(true);
+    setError(null);
+
     try {
-      const res = await fetch("https://magistory-app-production.up.railway.app/api/generate-script", {
+      const res = await fetch(`${backendURL}/api/generate-script`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ide: ide,
-          durasi_total: durasi,
+          ide: idea,
+          durasi_total: duration,
           aspect_ratio: aspect,
           style: style,
         }),
       });
 
-      const data = await res.json();
-
-      if (!data.adegan) {
-        alert("Gagal mendapatkan skrip dari Gemini. Lihat log backend.");
-        console.error(data);
+      // 🔹 Jika backend menolak (401/500), tampilkan error yang jelas
+      if (!res.ok) {
+        const errMsg = `Gagal generate script (status ${res.status}). Cek API key backend.`;
+        setError(errMsg);
+        setLoading(false);
         return;
       }
 
-      // Tambahkan media otomatis dari Pexels
+      const data = await res.json();
+
+      if (!data.adegan || !Array.isArray(data.adegan)) {
+        setError("Respon dari server tidak sesuai format.");
+        setLoading(false);
+        return;
+      }
+
+      // 🔹 Tambahkan media otomatis dari Pexels
       const enrichedScenes = await Promise.all(
         data.adegan.map(async (scene) => {
-          const keywords = scene.kata_kunci_video || scene.deskripsi_visual;
-          const results = await searchMedia(keywords, 1);
-          return { ...scene, media: results };
+          if (!scene.deskripsi_visual) return { ...scene, media: [] };
+          const visuals = await Promise.all(
+            scene.deskripsi_visual.map((kw) => searchMedia(kw, 1))
+          );
+          return { ...scene, media: visuals.flat() };
         })
       );
 
       setScript({ ...data, adegan: enrichedScenes });
     } catch (err) {
-      console.error(err);
-      alert("Terjadi kesalahan saat generate script.");
+      console.error("🔥 Error saat generate:", err);
+      setError("Terjadi kesalahan di sisi frontend. Periksa koneksi atau API key.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8">
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-100">
       {!script ? (
-        <div className="w-full max-w-md space-y-4">
-          <h1 className="text-3xl font-bold text-center">Magistory Instant Video</h1>
+        <div className="w-full max-w-md space-y-4 bg-white shadow p-6 rounded-xl">
+          <h1 className="text-3xl font-bold text-center mb-4">
+            Magistory Instant Video
+          </h1>
+
+          {error && (
+            <div className="text-red-600 text-sm bg-red-50 p-2 rounded">
+              {error}
+            </div>
+          )}
+
           <input
             className="border p-2 rounded w-full"
             placeholder="Masukkan ide video..."
-            value={ide}
-            onChange={(e) => setIde(e.target.value)}
+            value={idea}
+            onChange={(e) => setIdea(e.target.value)}
           />
+
           <input
             className="border p-2 rounded w-full"
             type="number"
-            value={durasi}
-            onChange={(e) => setDurasi(e.target.value)}
+            min="10"
+            max="300"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
             placeholder="Durasi total (detik)"
           />
+
           <input
             className="border p-2 rounded w-full"
             value={aspect}
             onChange={(e) => setAspect(e.target.value)}
             placeholder="Aspect Ratio (misal 16:9)"
           />
+
           <input
             className="border p-2 rounded w-full"
             value={style}
             onChange={(e) => setStyle(e.target.value)}
-            placeholder="Gaya video (edukatif, cinematic...)"
+            placeholder="Gaya video (Edukasi, Cinematic, dll)"
           />
+
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className="bg-blue-600 text-white w-full py-2 rounded-lg"
+            className={`w-full py-2 rounded-lg text-white ${
+              loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
-            {loading ? "Menghasilkan..." : "Generate"}
+            {loading ? "Menghasilkan..." : "✨ Generate Script"}
           </button>
         </div>
       ) : (
         <Timeline
           scriptData={script}
-          onSave={(data) => console.log("Save Project:", data)}
-          onRender={() => alert("Render popup akan muncul di versi berikutnya")}
+          onSave={(data) => console.log("💾 Project disimpan:", data)}
+          onRender={() => alert("🎬 Render popup akan ditambahkan di versi berikutnya.")}
         />
       )}
     </div>
   );
-}
+            }
