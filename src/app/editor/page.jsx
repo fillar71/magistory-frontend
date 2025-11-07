@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
-import Timeline from "../components/Timeline.jsx";
-import { searchMedia } from "../utils/pexelsApi.js";
 
-export default function Home() {
+import { useState } from "react";
+import Timeline from "../../components/Timeline";
+import { searchMedia } from "../../utils/pexelsApi";
+
+export default function EditorPage() {
   const [idea, setIdea] = useState("");
   const [duration, setDuration] = useState(30);
   const [aspect, setAspect] = useState("16:9");
@@ -43,10 +44,12 @@ export default function Home() {
       }
 
       const data = await res.json();
+
       if (!data.adegan || !Array.isArray(data.adegan)) {
         throw new Error("Format respons dari server tidak sesuai.");
       }
 
+      // Tambahkan hasil pencarian media otomatis dari Pexels
       const enrichedScenes = await Promise.all(
         data.adegan.map(async (scene) => {
           if (!scene.deskripsi_visual) return { ...scene, media: [] };
@@ -67,11 +70,11 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-100">
+    <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-gray-50">
       {!script ? (
-        <div className="w-full max-w-md space-y-4 bg-white shadow p-6 rounded-xl">
-          <h1 className="text-3xl font-bold text-center mb-4">
-            Magistory Instant Video
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 space-y-4">
+          <h1 className="text-3xl font-bold text-center text-blue-700">
+            Magistory Editor
           </h1>
 
           {error && (
@@ -81,14 +84,14 @@ export default function Home() {
           )}
 
           <input
-            className="border p-2 rounded w-full"
+            className="border p-3 rounded-lg w-full focus:ring focus:ring-blue-200"
             placeholder="Masukkan ide video..."
             value={idea}
             onChange={(e) => setIdea(e.target.value)}
           />
 
           <input
-            className="border p-2 rounded w-full"
+            className="border p-3 rounded-lg w-full"
             type="number"
             min="10"
             max="300"
@@ -98,14 +101,14 @@ export default function Home() {
           />
 
           <input
-            className="border p-2 rounded w-full"
+            className="border p-3 rounded-lg w-full"
             value={aspect}
             onChange={(e) => setAspect(e.target.value)}
             placeholder="Aspect Ratio (misal 16:9)"
           />
 
           <input
-            className="border p-2 rounded w-full"
+            className="border p-3 rounded-lg w-full"
             value={style}
             onChange={(e) => setStyle(e.target.value)}
             placeholder="Gaya video (Edukasi, Cinematic, dll)"
@@ -114,8 +117,10 @@ export default function Home() {
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className={`w-full py-2 rounded-lg text-white ${
-              loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+            className={`w-full py-3 rounded-lg text-white font-medium transition ${
+              loading
+                ? "bg-gray-400"
+                : "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
             }`}
           >
             {loading ? "Menghasilkan..." : "✨ Generate Script"}
@@ -125,9 +130,11 @@ export default function Home() {
         <Timeline
           scriptData={script}
           onSave={(data) => console.log("💾 Project disimpan:", data)}
-          onRender={() => alert("🎬 Render popup akan ditambahkan di versi berikutnya.")}
+          onRender={() =>
+            alert("🎬 Render popup akan ditambahkan di versi berikutnya.")
+          }
         />
       )}
-    </div>
+    </main>
   );
 }
