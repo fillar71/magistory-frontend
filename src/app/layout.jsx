@@ -1,15 +1,14 @@
-// src/app/layout.jsx
 import "./globals.css";
 
 export const metadata = {
-  title: "Magistory Instant Video",
-  description: "Buat video otomatis dari ide dalam hitungan detik!",
+  title: "Magistory - AI Video Generator",
+  description: "Buat video instan berbasis ide menggunakan AI dan Pexels API",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
-      <body className="bg-gray-100 min-h-screen">
+      <body className="font-sans bg-gray-50 text-gray-800">
         {children}
       </body>
     </html>
