@@ -12,7 +12,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // 🔹 Ambil URL backend dari .env atau fallback ke Railway
   const backendURL =
     process.env.NEXT_PUBLIC_BACKEND_URL ||
     "https://magistory-app-production.up.railway.app";
@@ -38,23 +37,16 @@ export default function Home() {
         }),
       });
 
-      // 🔹 Jika backend menolak (401/500), tampilkan error yang jelas
       if (!res.ok) {
-        const errMsg = `Gagal generate script (status ${res.status}). Cek API key backend.`;
-        setError(errMsg);
-        setLoading(false);
-        return;
+        const msg = await res.text();
+        throw new Error(`Gagal generate script (status ${res.status}): ${msg}`);
       }
 
       const data = await res.json();
-
       if (!data.adegan || !Array.isArray(data.adegan)) {
-        setError("Respon dari server tidak sesuai format.");
-        setLoading(false);
-        return;
+        throw new Error("Format respons dari server tidak sesuai.");
       }
 
-      // 🔹 Tambahkan media otomatis dari Pexels
       const enrichedScenes = await Promise.all(
         data.adegan.map(async (scene) => {
           if (!scene.deskripsi_visual) return { ...scene, media: [] };
@@ -67,8 +59,8 @@ export default function Home() {
 
       setScript({ ...data, adegan: enrichedScenes });
     } catch (err) {
-      console.error("🔥 Error saat generate:", err);
-      setError("Terjadi kesalahan di sisi frontend. Periksa koneksi atau API key.");
+      console.error("🔥 Error:", err);
+      setError(err.message || "Terjadi kesalahan di sisi frontend.");
     } finally {
       setLoading(false);
     }
@@ -138,4 +130,4 @@ export default function Home() {
       )}
     </div>
   );
-            }
+}
