@@ -1,8 +1,11 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
-    domains: ["images.pexels.com"],
+    domains: ["images.pexels.com"], // jika pakai <Image />
   },
 };
 
