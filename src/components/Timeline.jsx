@@ -1,36 +1,45 @@
-"use client";
-import { motion } from "framer-motion";
-import MediaPreview from "./MediaPreview.jsx";
+import MainPreview from "./MainPreview";
 
 export default function Timeline({ scriptData, onSave, onRender }) {
+  const { adegan } = scriptData;
+
   return (
-    <div className="w-full max-w-3xl mx-auto mt-6 p-4 bg-white rounded-2xl shadow-lg">
-      <h2 className="text-2xl font-semibold mb-4 text-center">
-        {scriptData.judul}
-      </h2>
-      {scriptData.adegan.map((scene) => (
-        <motion.div
-          key={scene.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="border rounded-xl p-4 mb-4 bg-gray-50"
-        >
-          <p className="font-semibold mb-1">🎬 Adegan {scene.id}</p>
-          <p className="text-sm text-gray-600 mb-1">Durasi: {scene.durasi}</p>
-          <p className="mb-2">{scene.narasi}</p>
-          <MediaPreview media={scene.media || []} />
-        </motion.div>
-      ))}
-      <div className="flex justify-between mt-6">
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2">
+        {adegan.map((scene, i) => (
+          <div key={i} className="bg-white p-4 rounded-lg shadow">
+            <h3 className="font-semibold text-blue-600 mb-2">
+              Adegan {i + 1}
+            </h3>
+            <p className="text-sm mb-1">{scene.narasi}</p>
+            <div className="flex gap-2 overflow-x-auto">
+              {scene.media?.map((m, idx) => (
+                <video
+                  key={idx}
+                  src={m.video_files?.[0]?.link}
+                  className="w-32 h-20 object-cover rounded"
+                  controls
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* 🎬 Tambahkan pratinjau utama */}
+      <MainPreview scenes={adegan} />
+
+      <div className="flex justify-center gap-4 mt-6">
         <button
           onClick={() => onSave(scriptData)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
         >
           💾 Simpan
         </button>
+
         <button
           onClick={onRender}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
         >
           🎬 Render
         </button>
