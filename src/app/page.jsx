@@ -1,26 +1,18 @@
 "use client";
+import { useRouter } from "next/navigation";
 
-import Link from "next/link";
-
-export default function HomePage() {
+export default function Home() {
+  const router = useRouter();
   return (
-    <main className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-50 to-white text-gray-800 p-6">
-      <h1 className="text-4xl font-bold mb-4 text-blue-700 text-center">
-        🎬 Magistory Instant Video
-      </h1>
-      <p className="text-lg text-center max-w-md mb-8">
-        Buat video menarik secara instan dengan bantuan AI dan media otomatis
-        dari Pexels. Cukup masukkan ide — biarkan Magistory yang bekerja!
-      </p>
-      <Link
-        href="/editor"
-        className="px-6 py-3 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
+    <main className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+      <h1 className="text-4xl font-bold mb-4">🎬 Magistory Instant Video</h1>
+      <p className="mb-6 text-lg">Ubah ide menjadi video siap pakai dalam hitungan detik!</p>
+      <button
+        onClick={() => router.push("/editor")}
+        className="bg-white text-blue-600 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition"
       >
-        Mulai Membuat Video
-      </Link>
-      <footer className="mt-12 text-gray-500 text-sm">
-        © 2025 Magistory • Made with ❤️ by Filla Ramadan
-      </footer>
+        Mulai Buat Video
+      </button>
     </main>
   );
 }
