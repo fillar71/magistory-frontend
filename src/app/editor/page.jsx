@@ -22,16 +22,21 @@ export default function EditorPage() {
     setLoading(true);
     setError(null);
     try {
+    
       const res = await fetch(`${backendURL}/api/generate-script`, {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
+  headers: {
+    "Content-Type": "application/json",
+    "Cache-Control": "no-cache",      // 🧠 cegah cache di network
+    Pragma: "no-cache",               // 🧠 cegah cache di HTTP 1.0
+  },
   body: JSON.stringify({
     ide: idea,
     durasi_total: duration,
     aspect_ratio: aspect,
     style: style,
   }),
-  cache: "no-store", // 🚫 cegah cache 304
+  cache: "no-store",                  // 🚫 cegah cache di Next.js/fetch
 });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
