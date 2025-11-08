@@ -23,16 +23,16 @@ export default function EditorPage() {
     setError(null);
     try {
       const res = await fetch(`${backendURL}/api/generate-script`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ide: idea,
-          durasi_total: duration,
-          aspect_ratio: aspect,
-          style,
-        }),
-      });
-
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    ide: idea,
+    durasi_total: duration,
+    aspect_ratio: aspect,
+    style: style,
+  }),
+  cache: "no-store", // 🚫 cegah cache 304
+});
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
 
