@@ -1,130 +1,48 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 
-export default function MainPreview({ scriptData }) {
-  const [currentClipIndex, setCurrentClipIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const videoRef = useRef(null);
-  const scenes = scriptData?.adegan || [];
+export default function MainPreview({ scriptData, backendURL }) {
+  const [isRendering, setIsRendering] = useState(false);
+  const [videoURL, setVideoURL] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const videoRef = useRef();
 
-  // Gabungkan semua media dari setiap adegan
-  const allClips = scenes.flatMap((scene) => scene.media || []);
-  const totalClips = allClips.length;
-  const currentClip = allClips[currentClipIndex];
-
-  // Hitung progress
-  const progress = ((currentClipIndex + 1) / totalClips) * 100;
-
-  // Mainkan otomatis saat klip berubah
-  useEffect(() => {
-    if (!videoRef.current) return;
-    videoRef.current.load();
-    if (isPlaying) {
-      videoRef.current.play().catch(() => {});
+  async function handleRender() {
+    setIsRendering(true);
+    try {
+      const res = await fetch(`${backendURL}/api/render`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(scriptData),
+      });
+      if (!res.ok) throw new Error("Gagal merender video.");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      setVideoURL(url);
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setIsRendering(false);
     }
-  }, [currentClipIndex, isPlaying]);
-
-  // Fungsi next clip
-  const nextClip = () => {
-    if (currentClipIndex < totalClips - 1) {
-      setCurrentClipIndex(currentClipIndex + 1);
-    } else {
-      setCurrentClipIndex(0); // ulang dari awal
-    }
-  };
-
-  // Jika video selesai, lanjut ke klip berikut
-  const handleEnded = () => {
-    if (isPlaying) nextClip();
-  };
-
-  // Fungsi play/pause
-  const togglePlay = () => setIsPlaying(!isPlaying);
+  }
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-6 p-4 bg-white rounded-lg shadow">
-      <h2 className="text-xl font-bold text-center mb-3">
-        🎬 Pratinjau Video Utama
-      </h2>
-
-      <div className="relative aspect-video bg-black rounded-lg overflow-hidden mb-3">
-        {currentClip ? (
-          currentClip.type === "video" ? (
-            <video
-              ref={videoRef}
-              src={currentClip.src}
-              className="w-full h-full object-cover"
-              onEnded={handleEnded}
-              controls={false}
-              muted
-              autoPlay
-            />
-          ) : (
-            <img
-              src={currentClip.thumbnail || currentClip.src}
-              alt="preview"
-              className="w-full h-full object-cover"
-            />
-          )
-        ) : (
-          <div className="flex items-center justify-center text-gray-400 h-full">
-            Tidak ada media untuk diputar
-          </div>
-        )}
-
-        {/* Progress bar */}
-        <div className="absolute bottom-0 left-0 w-full bg-gray-700 h-2">
-          <div
-            className="bg-blue-500 h-2 transition-all duration-200"
-            style={{ width: `${progress}%` }}
-          ></div>
+    <div className="bg-white p-4 rounded-xl shadow">
+      <h2 className="text-xl font-bold mb-3">🎥 Pratinjau Utama</h2>
+      {videoURL ? (
+        <video ref={videoRef} controls className="w-full rounded-lg" src={videoURL}></video>
+      ) : (
+        <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 rounded-lg">
+          Belum ada hasil render
         </div>
-      </div>
-
-      {/* Tombol kontrol */}
-      <div className="flex justify-center gap-4 mt-2">
-        <button
-          onClick={() =>
-            setCurrentClipIndex(
-              currentClipIndex > 0 ? currentClipIndex - 1 : totalClips - 1
-            )
-          }
-          className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
-        >
-          ⏮️ Sebelumnya
-        </button>
-
-        <button
-          onClick={togglePlay}
-          className={`px-4 py-2 rounded-lg text-white ${
-            isPlaying ? "bg-red-500" : "bg-green-500"
-          }`}
-        >
-          {isPlaying ? "⏸️ Pause" : "▶️ Play"}
-        </button>
-
-        <button
-          onClick={nextClip}
-          className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300"
-        >
-          ⏭️ Berikutnya
-        </button>
-      </div>
-
-      {/* Thumbnail navigator */}
-      <div className="flex overflow-x-auto gap-2 mt-4">
-        {allClips.map((clip, idx) => (
-          <img
-            key={idx}
-            src={clip.thumbnail || clip.src}
-            alt={`clip-${idx}`}
-            className={`w-20 h-14 object-cover cursor-pointer rounded-md ${
-              idx === currentClipIndex ? "ring-2 ring-blue-600" : ""
-            }`}
-            onClick={() => setCurrentClipIndex(idx)}
-          />
-        ))}
-      </div>
+      )}
+      <button
+        onClick={handleRender}
+        disabled={isRendering}
+        className="w-full mt-4 py-3 bg-green-600 text-white rounded-lg"
+      >
+        {isRendering ? "⏳ Merender..." : "🚀 Render Video"}
+      </button>
     </div>
   );
-          }
+}
